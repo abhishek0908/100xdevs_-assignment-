@@ -16,6 +16,51 @@
   Once you've implemented the logic, test your code by running
 */
 
-class Calculator {}
+class Calculator {
+  constructor()
+  {
+    this.result=0;
+  }
+   add(a) {
+    result+=a;
+  }
+   substract(a) {
+    result-=a;
+  }
+   multiply(a) {
+    result*=a;
+  }
+  divide(a) {
+    result/=a;
+  }
+  clear() {
+    result=0;
+  }
+  getResult() {
+    return result;
+  }
+  calculate(expression)
+  {
+    expression = expression.replace(/\s+/g, '');
+
+  try {
+    // Evaluate the expression
+    const result: number = eval(expression);
+    return result;
+  } catch (error) {
+    // Handle errors for invalid expressions
+    throw new Error(`Invalid expression: ${expression}`);
+  }
+}
+
+// Example usage:
+const inputExpression: string = "10 + 2 * (6 - (4 + 1) / 2) + 7";
+
+try {
+  const result: number = calculate(inputExpression);
+  console.log("Result:", result);
+} catch (error) {
+  console.error("Error:", error.message);
+}
 
 module.exports = Calculator;
