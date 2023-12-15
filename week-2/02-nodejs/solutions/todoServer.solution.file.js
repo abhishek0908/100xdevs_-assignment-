@@ -13,6 +13,7 @@ function findIndex(arr, id) {
   return -1;
 }
 
+
 function removeAtIndex(arr, index) {
   let newArray = [];
   for (let i = 0; i < arr.length; i++) {

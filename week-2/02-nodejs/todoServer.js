@@ -39,11 +39,124 @@
 
   Testing the server - run `npm run test-todoServer` command in terminal
  */
+
   const express = require('express');
   const bodyParser = require('body-parser');
-  
+  const fs  = require('fs')
   const app = express();
-  
+  const port=3000
+
+  function findIndex(todosData,id)
+  {
+    for(let i=0;i<todosData.length;i++)
+    {
+      if(todosData[i].id===id) return i;
+    }
+    return -1;
+  }
+  function deleteTodoIndex(todos,id){
+    let arr = []; 
+    for(let i=0;i<todos.length;i++)
+    {
+      if(id!=i) arr.push(todos[i]);
+    }
+    return arr;
+  }
+
+  // Give the todos all list 
   app.use(bodyParser.json());
+  app.get('/todos',(req,res)=>{
+      fs.readFile('todos.json','utf-8',(err,data)=>{
+          if(err)
+          {
+            throw error
+          }
+          res.json(JSON.parse(data))
+      });
+  });
+
+  // give the specific index
+  app.get('/todos/:id',(req,res)=>{
+      fs.readFile('todos.json','utf-8',(err,data)=>{
+          if(err)
+          {
+            throw error
+          }
   
+          const jsonData = JSON.parse(data)
+          const ItemIndex = findIndex(jsonData,parseInt(req.params.id))
+          console.log(ItemIndex);
+          if(ItemIndex==-1)
+          {
+            res.status(404).send();
+
+          }
+          else{
+          res.status(200).json(jsonData[ItemIndex])
+          }
+      })
+  })
+
+
+  // insert the data into the list
+  app.post('/todos',(req,res)=>{
+      todo = {
+        "id" : Math.floor(Math.random()*100),
+        "title" : req.body.title,
+        "description" : req.body.description
+      }
+      fs.readFile('todos.json',(err,data)=>{
+          if(err) throw err
+          const jsonData = JSON.parse(data)
+          jsonData.push(todo)
+     
+      fs.writeFile('todos.json',JSON.stringify(jsonData),()=>{
+        if(err) throw err
+        res.status(201).json(todo)
+      })
+    })
+  })
+
+
+  app.put('/todos/:id',(req,res)=>{
+        fs.readFile('todos.json',(err,data)=>{
+          if(err) throw err
+          const jsonData = JSON.parse(data)
+          let indexItem = findIndex(jsonData,parseInt(req.params.id))
+          if(indexItem==-1) 
+            res.send("404 Not Found")
+          else{
+            console.log(jsonData[indexItem]['title']);
+          jsonData[indexItem]['title'] = req.body.title;
+          jsonData[indexItem]['description'] = req.body.description
+          fs.writeFile('todos.json',JSON.stringify(jsonData),(err)=>{
+            if(err) throw err
+            res.status(200).json(jsonData[indexItem])
+          })
+        }
+        })
+  })
+
+
+  //delete todo
+  app.delete('/todos/:id',(req,res)=>{
+    fs.readFile('todos.json',(err,data)=>{
+      if(err) throw err
+      const jsonData  = JSON.parse(data);
+      const ItemIndex = findIndex(jsonData,parseInt(req.params.id))
+      if(ItemIndex==-1)  res.send("404 Not Found")
+      else{
+        const updatedafterdeleteJson = deleteTodoIndex(jsonData,ItemIndex);
+        fs.writeFile('todos.json',JSON.stringify(updatedafterdeleteJson),(err)=>{
+          if(err) throw err;
+          res.status(200).send();
+        })
+      }
+    })
+  })
+  app.use((req, res, next) => {
+    res.status(404).send();
+  });
+  
+
   module.exports = app;
