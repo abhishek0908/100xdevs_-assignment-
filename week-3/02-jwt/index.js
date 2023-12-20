@@ -1,15 +1,6 @@
 const jwt = require('jsonwebtoken');
 const jwtPassword = 'secret';
 
-<<<<<<< HEAD
-function signJwt(username) {
-    try {
-        const token = jwt.sign({ username: username }, jwtPassword);
-        return token;
-    } catch (error) {
-        throw new Error('Error signing JWT');
-    }
-=======
 
 /**
  * Generates a JWT for a given username and password.
@@ -23,8 +14,8 @@ function signJwt(username) {
  *                        the password does not meet the length requirement.
  */
 function signJwt(username, password) {
-    // Your code here
->>>>>>> 3823c7f66a6e3ab08b6bc7d53c2dec9403f99d3d
+    if(!username.includes('@')||password.length<6) {return null;}
+    return jwt.sign({username :username},jwtPassword)
 }
 
 /**
@@ -36,16 +27,13 @@ function signJwt(username, password) {
  *                    using the secret key.
  */
 function verifyJwt(token) {
-<<<<<<< HEAD
-    try {
-        const decoded = jwt.verify(token, jwtPassword);
-        return decoded;
-    } catch (error) {
-        throw new Error('Invalid JWT token');
+    try{
+        jwt.verify(token,jwtPassword)
+        return true;
     }
-=======
-    // Your code here
->>>>>>> 3823c7f66a6e3ab08b6bc7d53c2dec9403f99d3d
+    catch(error){
+        return false;
+    }
 }
 
 /**
@@ -56,30 +44,20 @@ function verifyJwt(token) {
  *                         Returns false if the token is not a valid JWT format.
  */
 function decodeJwt(token) {
-<<<<<<< HEAD
-    try {
-        const decoded = jwt.decode(token, { complete: true });
-        return decoded;
-    } catch (error) {
-        throw new Error('Error decoding JWT');
+    try{
+        const check = jwt.decode(token);
+        if(check) return true;
+        else return false;
     }
-=======
-    // Your code here
->>>>>>> 3823c7f66a6e3ab08b6bc7d53c2dec9403f99d3d
+    catch(error){
+        return false;
+    }
 }
 
 
 module.exports = {
-<<<<<<< HEAD
-    signJwt,
-    verifyJwt,
-    decodeJwt,
-    jwtPassword
-}
-=======
   signJwt,
   verifyJwt,
   decodeJwt,
   jwtPassword,
 };
->>>>>>> 3823c7f66a6e3ab08b6bc7d53c2dec9403f99d3d
