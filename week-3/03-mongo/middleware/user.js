@@ -1,6 +1,16 @@
+const { User } = require("../db");
+
 function userMiddleware(req, res, next) {
-    // Implement user auth logic
-    // You need to check the headers and validate the user from the user DB. Check readme for the exact headers to be expected
+    const email = req.body.email;
+    const password = req.body.password;
+    const listofpeople = User.find();
+    for(let i=0;i<listofpeople.length;i++)
+    {
+        if(listofpeople[i]["email"]=email&&listofpeople[i]["password"]==password){
+            res.send("Admin Exists");
+        }
+    }
+    next()
 }
 
 module.exports = userMiddleware;

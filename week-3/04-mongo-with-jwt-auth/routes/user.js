@@ -8,7 +8,7 @@ app.post('/signup', (req, res) => {
 });
 
 app.post('/signin', (req, res) => {
-    // Implement admin signup logic
+    // Implement admin signin logic
 });
 
 app.get('/courses', (req, res) => {

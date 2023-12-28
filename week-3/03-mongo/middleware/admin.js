@@ -1,7 +1,16 @@
 // Middleware for handling auth
+const {Admin} = require('../db')
 function adminMiddleware(req, res, next) {
-    // Implement admin auth logic
-    // You need to check the headers and validate the admin from the admin DB. Check readme for the exact headers to be expected
+    const email = req.body.email;
+    const password = req.body.password;
+    const listofpeople = Admin.find();
+    for(let i=0;i<listofpeople.length;i++)
+    {
+        if(listofpeople[i]["email"]=email&&listofpeople[i]["password"]==password){
+            res.send("Admin Exists");
+        }
+    }
+    next()
 }
 
 module.exports = adminMiddleware;
