@@ -1,65 +1,63 @@
 const { Router } = require("express");
-const router = Router();
+const express = require("express");
+const router = express.Router();
 const userMiddleware = require("../middleware/user");
-const { Course } = require("../db");
-
-// User Routes
-app.post('/signup', (req, res) => {
+const { Course, User } = require("../db");
+router.post('/signup', (req, res) => {
     const username = req.body.username;
-    const email = req.body.email;
     const password = req.body.password;
-    const user = new Admin({
+    const user = new User({
         username:username,
-        email:email,
         password:password,
     })
     user.save();
     res.send("User Created Successfully")
 });
 
-app.get('/courses', async(req, res) => {
+router.get('/courses', async(req, res) => {
     const allcourse = await Course.find({})
-    res.send().json({allcourse})
+    res.json({allcourse})
 });
 
-app.post('/courses/:courseId', userMiddleware, async(req, res) => {
-        const email = req.body.email;
-        const courseId = req.parms.courseId;
-        try{
+router.post('/courses/:courseId', userMiddleware, async (req, res) => {
+    const username = req.body.username;
+    const courseId = req.params.courseId;
+
+    try {
         const course = await Course.findById(courseId);
-        if(!course)
-        {
-            res.send("Course Does'nt Exists")
+        if (!course) {
+            return res.send("Course Doesn't Exist");
         }
-        const user = await User.find({"email":email});
-        if(!user)
-        {
-            res.send("User Does'nt Exists")
+
+        const user = await User.findOne({"username": username}); // Using findOne instead of find
+        if (!user) {
+            return res.send("User Doesn't Exist");
         }
-        user.purchasedCourse.push(course)
+
+        user.purchasedCourse.push(courseId);
         await user.save();
-        res.send("Course is Pushed Successfully")
-    }
-    catch{
-        console.error(error);
+        res.send("Course is Pushed Successfully");
+    } catch (err) {
+        console.log(err);
         res.status(500).send('Internal Server Error');
     }
-        
 });
 
-app.get('/purchasedCourses', userMiddleware, async (req, res) => {
-    const email = req.body.email;
+
+router.get('/purchasedCourses', userMiddleware, async (req, res) => {
+    const username = req.body.username;
     try {
-        const user = await User.findOne({ email: email });
+        const user = await User.findOne({ "username": username });
     
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        const purchasedCourses = user.purchasedCourses || [];
-        res.json({ purchasedCourses: purchasedCourses });
+        res.send( user.purchasedCourse );
     
     } catch (error) {
         console.error("Error fetching user:", error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
+module.exports = router

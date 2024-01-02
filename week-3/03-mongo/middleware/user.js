@@ -1,16 +1,23 @@
 const { User } = require("../db");
 
 function userMiddleware(req, res, next) {
-    const email = req.body.email;
-    const password = req.body.password;
-    const listofpeople = User.find();
-    for(let i=0;i<listofpeople.length;i++)
-    {
-        if(listofpeople[i]["email"]=email&&listofpeople[i]["password"]==password){
-            res.send("Admin Exists");
+  // In your Express route
+const username = req.body.username;
+const password = req.body.password;
+
+   User.findOne({
+        username : username,
+        password : password
+
+    }).then((value)=>{
+        if(value){
+            next()
         }
-    }
-    next()
+        else{
+            res.status(403).json({msg : "User Does not exits"})
+        } 
+    })
+
 }
 
 module.exports = userMiddleware;

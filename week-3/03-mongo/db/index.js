@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://abhishek:OAypDDBi0snC5v9S@cluster0.4xp2dgo.mongodb.net/CourseDB')
+mongoose.connect('mongodb://0.0.0.0:27017/CourseDB')
 .then(() => {
     console.log('Connected to the database');
 })
@@ -12,24 +12,23 @@ mongoose.connect('mongodb+srv://abhishek:OAypDDBi0snC5v9S@cluster0.4xp2dgo.mongo
 // Define schemas
 const AdminSchema = new mongoose.Schema({
     username:{type:String,required:true,unique:true},
-    email:{type:String,required:true,unique:true},
     password:{type:String,required:true}
 
 });
 
 const UserSchema = new mongoose.Schema({
     username:{type:String,required:true,unique:true},
-    email:{type:String,required:true,unique:true},
     password:{type:String,required:true},
-    purchasedCourse  : [
-        {id : mongoose.Types.Object,
-        ref :'Course'}
+    purchasedCourse: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Course'
+        }
     ]
 
 });
 
 const CourseSchema = new mongoose.Schema({
-    id: { type: String, required: true, unique: true },
     title: { type: String, required: true },
     desc: { type: String },
     price: { type: Number, required: true },
@@ -44,5 +43,5 @@ const Course = mongoose.model('Course', CourseSchema);
 module.exports = {
     Admin,
     User,
-    Course
+    Course,
 }
